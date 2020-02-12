@@ -71,6 +71,7 @@ def generate_diagram(project_name, start, upto):
         week_stat["lines"] = lines
         lines_per_week.append(week_stat)
 
+    print("Data for " + str(len(lines_per_week)) + " weeks found!\n")
     df = pd.DataFrame(lines_per_week)
     df['week'] = pd.to_datetime(df['week'])
     df['commits'] = df.commits.diff()
