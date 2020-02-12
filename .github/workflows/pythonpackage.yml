@@ -1,6 +1,9 @@
 name: Generate activity diagrams
 
-on: [push]
+on:
+  push:
+    paths-ignore:
+    - '!images/statistics.png'
 
 jobs:
   build:
@@ -23,6 +26,7 @@ jobs:
     - name: Move python script to repository root
       run: |
            cp .github/workflows/generateStatistic.py .
-           git log --format=format: --shortstat master -- *.md
     - name: Run python script
       run:  python	generateStatistic.py
+    - name: Preprocessing 
+      run:  
