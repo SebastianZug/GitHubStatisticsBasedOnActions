@@ -185,4 +185,4 @@ def generate_diagram(project_name, start, upto):
 if __name__ == "__main__":
     project_name = git_get_projectname()
     start = git_get_first_commit()
-    generate_diagram(project_name, start, date.today())
+    generate_diagram(project_name, start, date.today() + timedelta(days=8))
