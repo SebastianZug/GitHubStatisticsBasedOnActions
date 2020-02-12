@@ -20,4 +20,4 @@ jobs:
            python -m pip install --upgrade pip
            pip install matplotlib
     - name: Print Repository folder content
-      run: ls -all
+      run: git log
