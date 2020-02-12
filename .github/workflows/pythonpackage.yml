@@ -2,12 +2,8 @@ name: Generate activity diagrams
 
 on:
   push:
-    branches:
-      - '**'
-    tags-ignore:
-      - '*.*'
-    paths-ignore:
-      - images/statistics.png
+    paths:
+    - '**.md'
 
 jobs:
   build:
