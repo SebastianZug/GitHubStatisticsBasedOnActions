@@ -76,13 +76,13 @@ def generate_data(start, upto):
         activities_per_day.append(daily_stat)
 
     df = pd.DataFrame(activities_per_day)
-
+    print(df.head())
     if len(activities_per_day):
         df['day'] = pd.to_datetime(df['day'])
         df.set_index('day', inplace=True)
         df.drop(df[df.commits == 0].index, inplace=True)
         print("... {0} activity days with {1} lines of code found.".format(df.lines.count(), df.lines.sum()))
-        print(df.head())
+        
     return df
 
 def generate_diagram(project_name, data, interval, filename):
