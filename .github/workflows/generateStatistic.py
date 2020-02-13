@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 def days(start, upto):
     td = upto - start
     day_count = int(td/timedelta(days = 1))
-    return [start + timedelta(days = x) for x in range(day_count + 1)]
+    return [start + timedelta(days = x) for x in range(day_count)]
 
 def git_get_first_commit():
     command = ['git', 'log', '--reverse', '--date=short']
@@ -27,7 +27,8 @@ def git_get_first_commit():
     return date(date_[0], date_[1], date_[2])
 
 def git_log_command(date):
-    return ['git', 'log', '--before={0}'.format(date.isoformat()), '--format=format:', '--shortstat', 'master', '--', '*.md']
+    end = date + timedelta(days = 1)
+    return ['git', 'log', '--after={0} 00:00'.format(date.isoformat()), '--before={0} 00:00'.format(end.isoformat()),'--format=format:', '--shortstat', 'master', '--', '*.md']
 
 def get_key_values(string_array, substring):
     index = [idx for idx, s in enumerate(string_array) if substring in s]
@@ -58,7 +59,6 @@ def generate_data(start, upto):
         filtered = io.StringIO(result.replace('\n\n','\n'))
         commits = 0
         lines = 0
-
         for line in filtered:
             content = line.split(' ')
             index = get_key_values(content, 'file')
@@ -76,29 +76,31 @@ def generate_data(start, upto):
         activities_per_day.append(daily_stat)
 
     df = pd.DataFrame(activities_per_day)
+
     if len(activities_per_day):
         df['day'] = pd.to_datetime(df['day'])
         df.set_index('day', inplace=True)
-        df['commits'] = df.commits.diff()
-        df['lines'] = df.lines.diff()
         df.drop(df[df.commits == 0].index, inplace=True)
         print("... {0} activity days with {1} lines of code found.".format(df.lines.count(), df.lines.sum()))
+        print(df.head())
     return df
 
 def generate_diagram(project_name, data, interval, filename):
     df = data.groupby(pd.Grouper(freq=interval)).sum()
-    df['lines_sum'] = df.lines.cumsum()
+    df['lines_sum'] = df.lines.cumsum().astype('int64')
     df.drop(['lines'], axis=1, inplace=True)
+    #print(df.head())
     fig, ax = plt.subplots()
-    df.lines_sum.plot(drawstyle="steps", linewidth = 2, ax = ax)
+    df.lines_sum.plot(drawstyle="steps-mid", linewidth = 2, ax = ax)
     ax.set_title(project_name)
-    df.plot(secondary_y=['commits'], drawstyle="steps", ax = ax)
+    df.plot(secondary_y=['commits'], drawstyle="steps-mid", ax = ax)
     ax.set_xlabel(filename)
     ax.set_ylabel('Lines of Code')
     ax.right_ax.set_ylabel('Commits per ' + filename)
     plt.tight_layout()
     #plt.show()
-    fig.savefig(filename)
+    fig.savefig(filename+".png")
+    print("File saved to " + filename + ".png")
 
 if __name__ == "__main__":
     project_name = git_get_projectname()
@@ -111,7 +113,7 @@ if __name__ == "__main__":
         "Month": 'M',
         "Year": 'Y'}
     for name, abbrevation in intervals.items():
-        generate_diagram(project_name, data, abbrevation, name+".png")
+        generate_diagram(project_name, data, abbrevation, name)
 
     # Example for individual filter
     # Visualize code generation during last 30 days
