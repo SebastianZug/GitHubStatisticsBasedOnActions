@@ -16,4 +16,4 @@ generate_diagram(project_name, filtered, 'D', "LastMonth")
 ```
 ![Alt text](/statistics/LastMonth.png?raw=true "Last 30 days")
 
-The corresponding action description is available in `.github\workflow`.
+The corresponding action description is available in `.github\workflow`. It is activiated by changes in files with extention `.md`.
