@@ -53,10 +53,12 @@ def generate_data(start, upto):
     print("Reading time interval of " + str(len(interval)) + " days ...")
     for d in interval:
         daily_stat = {}
+        print(git_log_command(d))
         result = subprocess.run(git_log_command(d),
                                 check=True,
                                 stdout=subprocess.PIPE,
                                 universal_newlines=True).stdout
+        print(result)
         filtered = io.StringIO(result.replace('\n\n','\n'))
         commits = 0
         lines = 0
