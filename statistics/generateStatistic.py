@@ -80,7 +80,7 @@ def generate_data(start, upto):
     if len(activities_per_day):
         df['day'] = pd.to_datetime(df['day'])
         df.set_index('day', inplace=True)
-        df.drop(df[df.commits == 0].index, inplace=True)
+        #df.drop(df[df.commits == 0].index, inplace=True)
         print("... {0} activity days with {1} lines of code found.".format(df.lines.astype(bool).sum(axis=0), df.lines.sum()))
 
     return df
