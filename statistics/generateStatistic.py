@@ -131,5 +131,6 @@ if __name__ == "__main__":
 
     # Example for individual filter
     # Visualize code generation during last 30 days
-    filtered = data.loc[date.today() - timedelta(days=30): date.today()]
-    generate_diagram(project_name, filtered, 'D', "LastMonth")
+    data = generate_data(date.today() - timedelta(days=30),
+                         date.today() + timedelta(days=1))
+    generate_diagram(project_name, data, 'D', "LastMonth")
