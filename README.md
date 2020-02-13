@@ -5,3 +5,4 @@ A github action monitors changes in this fake document and provides different di
 ![Alt text](/images/Day.png?raw=true "Daily Changes")
 
 ![Alt text](/images/Week.png?raw=true "Weekly Changes")
+
