@@ -79,7 +79,6 @@ def generate_data(start, upto):
         activities_per_day.append(daily_stat)
 
     df = pd.DataFrame(activities_per_day)
-    print(df.head())
     if len(activities_per_day):
         df['day'] = pd.to_datetime(df['day'])
         df.set_index('day', inplace=True)
@@ -92,7 +91,7 @@ def generate_diagram(project_name, data, interval, filename):
     df = data.groupby(pd.Grouper(freq=interval)).sum()
     df['lines_sum'] = df.lines.cumsum().astype('int64')
     df.drop(['lines'], axis=1, inplace=True)
-    #print(df.head())
+    print(df.head())
     fig, ax = plt.subplots()
     df.lines_sum.plot(drawstyle="steps-mid", linewidth = 2, ax = ax)
     ax.set_title(project_name)
@@ -111,7 +110,7 @@ if __name__ == "__main__":
     project_name = git_get_projectname()
     print("Evaluating project " + project_name)
     start = git_get_first_commit()
-    data = generate_data(start - timedelta(days=1), date.today() + timedelta(days=2))
+    data = generate_data(start, date.today() + timedelta(days=1))
     intervals = {
         "Day": 'D',
         "Week": "W",
