@@ -1,6 +1,3 @@
-# LiaScriptTestProject
-Evaluates enhanced LiaScript Workflow
+# Monitoring GitHub Projects be evaluating git logs
 
-Test 1
-
-Test 2
+Changes in this fake document are automatically evaluated. A action triggered python script generates diagrams depicting the development of lines of code and commits for several intervals.
