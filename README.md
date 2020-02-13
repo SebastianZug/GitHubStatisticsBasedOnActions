@@ -19,9 +19,61 @@ __Examples__
 ```python
 # Example for individual filter
 # Visualize code generation during last 30 days
-filtered = data.loc[date.today() - timedelta(days=30): date.today()]
-generate_diagram(project_name, filtered, 'D', "LastMonth")
+data = generate_data(date.today() - timedelta(days=30),
+                     date.today() + timedelta(days=1))
+generate_diagram(project_name, data, 'D', "LastMonth")
 ```
+
 ![Alt text](/statistics/LastMonth.png?raw=true "Last 30 days")
 
 The corresponding action description is available in `.github\workflow`. It is activated by changes in files with extension `.md`! The filtering avoids an endless loop by generating new content based on the action.
+
+```
+name: Generate activity diagrams
+
+on:
+  push:
+    paths:
+    - '**.md'
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v2
+      with: 
+        fetch-depth: 0
+    - name: Set up Python 3.6
+      uses: actions/setup-python@v1
+      with:
+        python-version: '3.6' # Semantic version range syntax or exact version of a Python version
+    - name: Display Python version
+      run: python -c "import sys; print(sys.version)"
+    - name: Install dependencies
+      run: |
+           python -m pip install --upgrade pip
+           pip install matplotlib
+           pip install pandas
+    - name: Move python script to repository root
+      run: |
+           cp statistics/generateStatistic.py .
+    - name: Run python script
+      run: |
+           python generateStatistic.py
+           rm generateStatistic.py
+    - name: Commit files
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        mv *.png statistics/
+        git add ./statistics/*.png
+        git status
+        git commit -m "Add new statistics" -a
+    - name: Push changes
+      uses: ad-m/github-push-action@v0.5.0
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+```
