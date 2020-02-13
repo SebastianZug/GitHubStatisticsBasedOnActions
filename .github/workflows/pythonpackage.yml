@@ -27,7 +27,9 @@ jobs:
       run: |
            cp statistics/generateStatistic.py .
     - name: Run python script
-      run:  python generateStatistic.py
+      run: |
+           python generateStatistic.py
+           rm generateStatistic.py
     - name: Commit files
       run: |
         git config --local user.email "action@github.com"
