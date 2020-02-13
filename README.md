@@ -1,8 +1,8 @@
 # Monitoring GitHub Projects be evaluating git logs
 
-A GitHub action monitors changes in this fake document and provides different diagrams automatically. They depict the development of lines of code and commits for various time intervals. 
+A GitHub action monitors changes in this examplary document and provides different diagrams automatically. They depict the code count and number of commits for various time intervals. 
 
-The python file contains methods for extracting daily git statistics. It maps the information in a python pandas table generates standard diagrams "Day.png", "Week.png" etc. Additionally, you can add more specific evaluations too.
+The corresponding python file contains methods for extracting git log parameter. It maps the information on a python pandas table and generates standard diagrams "Day.png", "Week.png" etc. Additionally, you can add more specific evaluations too.
 
 __Examples__
 
