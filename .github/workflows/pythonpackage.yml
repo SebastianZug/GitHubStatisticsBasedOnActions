@@ -28,11 +28,12 @@ jobs:
            cp .github/workflows/generateStatistic.py .
     - name: Run python script
       run:  python generateStatistic.py
+            cp *.png ./images/ 
     - name: Commit files
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add Month.png
+        git add ./images/*.png
         git commit -m "Add new statistics" -a
     - name: Push changes
       uses: ad-m/github-push-action@v0.5.0
