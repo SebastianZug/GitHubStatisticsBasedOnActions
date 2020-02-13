@@ -49,7 +49,7 @@ jobs:
     - name: Set up Python 3.6
       uses: actions/setup-python@v1
       with:
-        python-version: '3.6' # Semantic version range syntax or exact version of a Python version
+        python-version: '3.6'
     - name: Display Python version
       run: python -c "import sys; print(sys.version)"
     - name: Install dependencies
