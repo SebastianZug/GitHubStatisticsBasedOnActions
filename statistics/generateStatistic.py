@@ -53,12 +53,10 @@ def generate_data(start, upto):
     print("Reading time interval of " + str(len(interval)) + " days ...")
     for d in interval:
         daily_stat = {}
-        print(git_log_command(d))
         result = subprocess.run(git_log_command(d),
                                 check=True,
                                 stdout=subprocess.PIPE,
                                 universal_newlines=True).stdout
-        print(result)
         filtered = io.StringIO(result.replace('\n\n','\n'))
         commits = 0
         lines = 0
@@ -83,7 +81,7 @@ def generate_data(start, upto):
         df['day'] = pd.to_datetime(df['day'])
         df.set_index('day', inplace=True)
         df.drop(df[df.commits == 0].index, inplace=True)
-        print("... {0} activity days with {1} lines of code found.".format(df.lines.count(), df.lines.sum()))
+        print("... {0} activity days with {1} lines of code found.".format(df.lines.astype(bool).sum(axis=0), df.lines.sum()))
 
     return df
 
