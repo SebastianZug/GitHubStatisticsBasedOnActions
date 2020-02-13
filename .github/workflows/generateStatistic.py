@@ -1,4 +1,5 @@
 from datetime import date, timedelta
+from dateutil import relativedelta
 import subprocess
 import io
 import pandas as pd
@@ -6,8 +7,10 @@ import re
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 
-def weeks(start, upto):
-    return [date.fromordinal(d) for d in range(start.toordinal(), upto.toordinal(), 7)]
+def days(start, upto):
+    td = upto - start
+    day_count = int(td/timedelta(days = 1))
+    return [start + timedelta(days = x) for x in range(day_count + 1)]
 
 def git_get_first_commit():
     command = ['git', 'log', '--reverse', '--date=short']
@@ -42,11 +45,12 @@ def git_get_projectname():
     result = result.replace('\t', '\n')
     return result.split('\n')[1]
 
-def generate_diagram(project_name, start, upto):
-    lines_per_week = []
-
-    for d in weeks(start, upto):
-        week_stat = {}
+def generate_data(start, upto):
+    activities_per_day = []
+    interval = days(start, upto);
+    print("Reading time interval of " + str(len(interval)) + " days ...")
+    for d in interval:
+        daily_stat = {}
         result = subprocess.run(git_log_command(d),
                                 check=True,
                                 stdout=subprocess.PIPE,
@@ -66,29 +70,50 @@ def generate_diagram(project_name, start, upto):
             index = get_key_values(content, 'deletion')
             if index!=-1:
                 lines = lines - int(content[index -1 ])
-        week_stat["week"] = d
-        week_stat["commits"] = commits
-        week_stat["lines"] = lines
-        lines_per_week.append(week_stat)
+        daily_stat["day"] = d
+        daily_stat["commits"] = commits
+        daily_stat["lines"] = lines
+        activities_per_day.append(daily_stat)
 
-    print("Data for " + str(len(lines_per_week)) + " weeks found!\n")
-    df = pd.DataFrame(lines_per_week)
-    df['week'] = pd.to_datetime(df['week'])
-    df['commits'] = df.commits.diff()
-    df.set_index('week', inplace=True)
-    print("Project " + project_name)
-    print("{0} commits with {1} lines of code".format(df.commits.count(), df.lines.max()))
-    ax = df.lines.plot(drawstyle="steps", linewidth = 2)
+    df = pd.DataFrame(activities_per_day)
+    if len(activities_per_day):
+        df['day'] = pd.to_datetime(df['day'])
+        df.set_index('day', inplace=True)
+        df['commits'] = df.commits.diff()
+        df['lines'] = df.lines.diff()
+        df.drop(df[df.commits == 0].index, inplace=True)
+        print("... {0} activity days with {1} lines of code found.".format(df.lines.count(), df.lines.sum()))
+    return df
+
+def generate_diagram(project_name, data, interval, filename):
+    df = data.groupby(pd.Grouper(freq=interval)).sum()
+    df['lines_sum'] = df.lines.cumsum()
+    df.drop(['lines'], axis=1, inplace=True)
+    fig, ax = plt.subplots()
+    df.lines_sum.plot(drawstyle="steps", linewidth = 2, ax = ax)
     ax.set_title(project_name)
-    df.commits.plot(secondary_y=['commits'], drawstyle="steps", ax = ax)
-    ax.set_xlabel('Weeks')
+    df.plot(secondary_y=['commits'], drawstyle="steps", ax = ax)
+    ax.set_xlabel(filename)
     ax.set_ylabel('Lines of Code')
-    ax.right_ax.set_ylabel('Commits per week')
+    ax.right_ax.set_ylabel('Commits per ' + filename)
+    plt.tight_layout()
     #plt.show()
-    fig = ax.get_figure()
-    fig.savefig('figure.png')
+    fig.savefig(filename)
 
 if __name__ == "__main__":
     project_name = git_get_projectname()
+    print("Evaluating project " + project_name)
     start = git_get_first_commit()
-    generate_diagram(project_name, start, date.today() + timedelta(days=8))
+    data = generate_data(start, date.today() + timedelta(days=1))
+    intervals = {
+        "Day": 'D',
+        "Week": "W",
+        "Month": 'M',
+        "Year": 'Y'}
+    for name, abbrevation in intervals.items():
+        generate_diagram(project_name, data, abbrevation, name+".png")
+
+    # Example for individual filter
+    # Visualize code generation during last 30 days
+    filtered = data.loc[date.today() - timedelta(days=30): date.today()]
+    generate_diagram(project_name, filtered, 'D', "LastMonth")
