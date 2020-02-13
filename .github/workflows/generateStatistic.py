@@ -1,4 +1,4 @@
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 from dateutil import relativedelta
 import subprocess
 import io
@@ -6,6 +6,7 @@ import pandas as pd
 import re
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
+from pytz import reference
 
 def days(start, upto):
     td = upto - start
@@ -103,6 +104,8 @@ def generate_diagram(project_name, data, interval, filename):
     print("File saved to " + filename + ".png")
 
 if __name__ == "__main__":
+    localtime = reference.LocalTimezone()
+    print("Time zone of the server: " + str(localtime.tzname(datetime.now())))
     project_name = git_get_projectname()
     print("Evaluating project " + project_name)
     start = git_get_first_commit()
