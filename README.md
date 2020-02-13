@@ -2,4 +2,6 @@
 
 A github action monitors changes in this fake document and provides different diagrams automatically. They depict the development of lines of code and commits for various time intervals.
 
-![Alt text](/images/Day.png?raw=true "Optional Title")
+![Alt text](/images/Day.png?raw=true "Daily Changes")
+
+![Alt text](/images/Week.png?raw=true "Weekly Changes")
