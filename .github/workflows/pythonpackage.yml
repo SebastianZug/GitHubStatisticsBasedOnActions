@@ -13,6 +13,8 @@ jobs:
     steps:
     - name: Check out repository
       uses: actions/checkout@v2
+      with: 
+        fetch-depth: 0
     - name: Check log
       run:  git log --oneline --pretty="@%h"  --shortstat -- *.md
     - name: Set up Python 3.6
