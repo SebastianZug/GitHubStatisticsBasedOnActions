@@ -27,4 +27,14 @@ jobs:
       run: |
            cp .github/workflows/generateStatistic.py .
     - name: Run python script
-      run:  python	generateStatistic.py
+      run:  python generateStatistic.py
+    - name: Commit files
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add Month.png
+        git commit -m "Add new statistics" -a
+    - name: Push changes
+      uses: SebastianZug/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
