@@ -6,9 +6,7 @@ A github action monitors changes in this fake document and provides different di
 
 ![Alt text](/images/Week.png?raw=true "Weekly Changes")
 
-The python file contains methods for extracting daily git statistics.
-
-The python script covers standard diagrams but offers interfaces for additional evaluations too.
+The python file contains methods for extracting daily git statistics. The python script covers standard diagrams but offers interfaces for additional evaluations too.
 
 ```python
 # Example for individual filter
