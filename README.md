@@ -6,7 +6,7 @@ A GitHub action monitors changes in this fake document and provides different di
 
 ![Alt text](/images/Week.png?raw=true "Weekly Changes")
 
-The python file contains methods for extracting daily git statistics. It transforms the information into a pandas table. In the end, the script generates standard diagrams "Day.png", "Week.png" etc. but offers interfaces for additional evaluations too.
+The python file contains methods for extracting daily git statistics. It maps the information in a python pandas table generates standard diagrams "Day.png", "Week.png" etc. Additionlly you can add more specific evaluations too. 
 
 ```python
 # Example for individual filter
@@ -15,3 +15,5 @@ filtered = data.loc[date.today() - timedelta(days=30): date.today()]
 generate_diagram(project_name, filtered, 'D', "LastMonth")
 ```
 ![Alt text](/images/LastMonth.png?raw=true "Last 30 days")
+
+The corresponding action description is avialable in `.github\workflow`.
