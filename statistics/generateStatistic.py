@@ -83,7 +83,7 @@ def generate_data(start, upto):
         df.set_index('day', inplace=True)
         df.drop(df[df.commits == 0].index, inplace=True)
         print("... {0} activity days with {1} lines of code found.".format(df.lines.count(), df.lines.sum()))
-        
+
     return df
 
 def generate_diagram(project_name, data, interval, filename):
@@ -109,7 +109,7 @@ if __name__ == "__main__":
     project_name = git_get_projectname()
     print("Evaluating project " + project_name)
     start = git_get_first_commit()
-    data = generate_data(start, date.today() + timedelta(days=1))
+    data = generate_data(start - timedelta(days=1), date.today() + timedelta(days=2))
     intervals = {
         "Day": 'D',
         "Week": "W",
