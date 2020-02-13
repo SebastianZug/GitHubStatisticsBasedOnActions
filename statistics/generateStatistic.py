@@ -108,7 +108,7 @@ if __name__ == "__main__":
     project_name = git_get_projectname()
     print("Evaluating project " + project_name)
     start = git_get_first_commit()
-    data = generate_data(start, date.today() + timedelta(days=1))
+    data = generate_data(start - timedelta(days=1), date.today() + timedelta(days=7))
     intervals = {
         "Day": 'D',
         "Week": "W",
