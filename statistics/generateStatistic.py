@@ -3,11 +3,14 @@ import subprocess
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from matplotlib import dates
 import pathlib
 from pytz import reference
+from pandas.plotting import register_matplotlib_converters
+
+register_matplotlib_converters()
 
 relevant_file_types = ['.md']
-
 
 def git_log_history_command():
     return ['git', 'log', '--numstat',
@@ -34,9 +37,8 @@ def get_history_data(filename='git.log'):
     git_hist = git_hist.replace('"', ' ')
     with open(filename, 'w') as fp:
         fp.write(git_hist)
-    git_log = pd.read_csv(filename, sep="\t", header=None,
-                            names=['additions', 'deletions', 'filename',
-                                'sha', 'timestamp', 'author'])
+    names = ['additions', 'deletions', 'filename', 'sha', 'timestamp', 'author']
+    git_log = pd.read_csv(filename, sep="\t", header=None, names=names)
     git_log = git_log[['additions', 'deletions', 'filename']]\
             .join(git_log[['sha', 'timestamp', 'author']]\
             .fillna(method='ffill'))\
@@ -49,25 +51,27 @@ def get_history_data(filename='git.log'):
     git_log['line_count'] = git_log.additions.astype(float) -\
                             git_log.deletions.astype(float)
     git_log.loc[:, 'commit_count'] = 1
-    git_log['commit_count'] = git_log['commit_count'].rolling(git_log.shape[0]).count().astype('int')
     print("Found {0} commits in project's history".format(git_log.sha.unique().shape[0]))
     return git_log
 
 
 def generate_diagram(project_name, data, interval, filename):
-    df = data[["line_count", "commit_count"]].resample(interval).agg({"line_count": "sum", "commit_count": "max"})
+    df = data[["line_count", "commit_count"]].resample(interval)\
+          .agg({"line_count": "sum", "commit_count": "sum"})
     df['line_count_cumsum']= df.line_count.cumsum().astype('int')
     df.drop(["line_count"], axis=1, inplace=True)
     if df.shape[0] > 1:
-        fig, ax = plt.subplots()
-        df.line_count_cumsum.plot(drawstyle="steps-mid", linewidth=2, ax=ax)
-        ax.set_title(project_name)
-        df.plot(secondary_y=['commit_count'], drawstyle="steps-mid", ax=ax)
-        ax.set_xlabel(filename)
-        ax.set_ylabel('Lines of Code')
-        ax.right_ax.set_ylabel('Commits per ' + filename)
+        fig, ax = plt.subplots(2,1)
+        ax[0].set_title(project_name)
+        df.commit_count.plot.bar(label='Commit count', ax=ax[0], grid=True)
+        ax[0].grid(True)
+        ax[0].set_xticks([])
+        ax[0].set_xlabel("")
+        ax[0].set_ylabel("Commits")
+        df.line_count_cumsum.plot(drawstyle="steps-mid", ax=ax[1], grid=True)
+        ax[1].set_ylabel("Lines of code")
         plt.tight_layout()
-        plt.show()
+        #plt.show()
         fig.savefig(filename+".png")
         print("File saved to " + filename + ".png")
     else:
