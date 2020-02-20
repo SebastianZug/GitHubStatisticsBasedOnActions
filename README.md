@@ -2,7 +2,7 @@
 
 A GitHub action monitors changes in this examplary document and provides different diagrams automatically. They depict the code count and number of commits for various time intervals. 
 
-The corresponding python file contains methods for extracting git log parameter. It maps the information on a python pandas table and generates standard diagrams [Day.png](/statistics/Day.png), [Week.png](/statistics/Week.png)" etc. Additionally, you can add more specific evaluations too.
+The corresponding python file contains methods for extracting git log parameter. It maps the information on a python pandas table and generates standard diagrams [Day.png](/statistics/Day.png), [Week.png](/statistics/Week.png)" etc. Additionally, you can add more specific evaluations too. The script provides a csv file at the end.
 
 __Examples__
 
