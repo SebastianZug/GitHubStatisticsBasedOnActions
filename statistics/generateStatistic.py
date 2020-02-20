@@ -79,6 +79,7 @@ def generate_diagram(project_name, data, interval, filename):
 
 
 if __name__ == "__main__":
+    print("Starting data aggregation and visualization!")
     localtime = reference.LocalTimezone()
     print("Time zone of the server: " + str(localtime.tzname(datetime.now())))
     project_name = get_project_name()
@@ -92,3 +93,4 @@ if __name__ == "__main__":
         "Year": 'Y'}
     for name, abbrevation in intervals.items():
         generate_diagram(project_name, filtered, abbrevation, name)
+    print("Aus die Maus!")
