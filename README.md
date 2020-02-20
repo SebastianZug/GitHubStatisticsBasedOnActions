@@ -14,18 +14,6 @@ __Examples__
 
 ![Alt text](/statistics/Week.png?raw=true "Weekly Changes")
 
-3. Lines of code / commits depicted for the last 30 days
-
-```python
-# Example for individual filter
-# Visualize code generation during last 30 days
-data = generate_data(date.today() - timedelta(days=30),
-                     date.today() + timedelta(days=1))
-generate_diagram(project_name, data, 'D', "LastMonth")
-```
-
-![Alt text](/statistics/LastMonth.png?raw=true "Last 30 days")
-
 The corresponding action description is available in `.github\workflow`. It is activated by changes in files with extension `.md`! The filtering avoids an endless loop by generating new content based on the action.
 
 ```
