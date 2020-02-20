@@ -5,12 +5,12 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib import dates
 import pathlib
-from pytz import reference
 from pandas.plotting import register_matplotlib_converters
 
 register_matplotlib_converters()
 
 relevant_file_types = ['.md']
+
 
 def git_log_history_command():
     return ['git', 'log', '--numstat',
@@ -45,7 +45,7 @@ def get_history_data(filename='git.log'):
             .dropna()
     git_log['timestamp'] = pd.to_datetime(git_log.timestamp, unit='s')
     git_log.set_index('timestamp', inplace=True)
-    git_log['extention'] = git_log.filename.apply(lambda path: pathlib.PurePosixPath(path).suffix) 
+    git_log['extention'] = git_log.filename.apply(lambda path: pathlib.PurePosixPath(path).suffix)
     git_log.loc[git_log['additions'] == '-', 'additions'] = np.nan
     git_log.loc[git_log['deletions'] == '-', 'deletions'] = np.nan
     git_log['line_count'] = git_log.additions.astype(float) -\
@@ -58,10 +58,10 @@ def get_history_data(filename='git.log'):
 def generate_diagram(project_name, data, interval, filename):
     df = data[["line_count", "commit_count"]].resample(interval)\
           .agg({"line_count": "sum", "commit_count": "sum"})
-    df['line_count_cumsum']= df.line_count.cumsum().astype('int')
+    df['line_count_cumsum'] = df.line_count.cumsum().astype('int')
     df.drop(["line_count"], axis=1, inplace=True)
     if df.shape[0] > 1:
-        fig, ax = plt.subplots(2,1)
+        fig, ax = plt.subplots(2, 1)
         ax[0].set_title(project_name)
         df.commit_count.plot.bar(label='Commit count', ax=ax[0], grid=True)
         ax[0].grid(True)
@@ -71,7 +71,7 @@ def generate_diagram(project_name, data, interval, filename):
         df.line_count_cumsum.plot(drawstyle="steps-mid", ax=ax[1], grid=True)
         ax[1].set_ylabel("Lines of code")
         plt.tight_layout()
-        #plt.show()
+        # plt.show()
         fig.savefig(filename+".png")
         print("File saved to " + filename + ".png")
     else:
@@ -79,8 +79,6 @@ def generate_diagram(project_name, data, interval, filename):
 
 
 if __name__ == "__main__":
-    localtime = reference.LocalTimezone()
-    print("Time zone of the server: " + str(localtime.tzname(datetime.now())))
     project_name = get_project_name()
     print("Evaluating project " + project_name)
     data = get_history_data()
